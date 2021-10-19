@@ -2,14 +2,12 @@ package com.galaxy.framework.shiro.realm;
 
 import com.galaxy.common.core.domain.entity.SysUser;
 import com.galaxy.common.exception.user.CaptchaException;
+import com.galaxy.common.exception.user.UserNotExistsException;
 import com.galaxy.common.utils.ShiroUtils;
 import com.galaxy.framework.shiro.service.SysLoginService;
 import com.galaxy.system.service.ISysMenuService;
 import com.galaxy.system.service.ISysRoleService;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -22,7 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * <p>TODO</p>
+ * <p>验证码过滤器</p>
  *
  * @author Hance
  * @version V1.0.0
@@ -76,10 +74,13 @@ public class UserRealm  extends AuthorizingRealm {
         }
         SysUser user = null;
         try {
-            loginService.login(username,password);
+            user = loginService.login(username,password);
         }catch (CaptchaException e){
             throw new AuthenticationException(e.getMessage(),e);
+        }catch (UserNotExistsException e){
+            throw new UnknownAccountException(e.getMessage(),e);
         }
-        return null;
+        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user,password,getName());
+        return info;
     }
 }
