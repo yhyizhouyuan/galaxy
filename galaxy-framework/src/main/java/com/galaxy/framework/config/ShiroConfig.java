@@ -1,27 +1,24 @@
 package com.galaxy.framework.config;
 
+import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 import com.galaxy.common.constant.Constants;
 import com.galaxy.common.utils.StringUtils;
 import com.galaxy.common.utils.security.CipherUtils;
-import com.galaxy.common.utils.spring.SpringUtils;
 import com.galaxy.framework.shiro.realm.UserRealm;
-import com.galaxy.framework.shiro.session.OnlineSession;
 import com.galaxy.framework.shiro.session.OnlineSessionDAO;
 import com.galaxy.framework.shiro.session.OnlineSessionFactory;
-import com.galaxy.framework.shiro.session.OnlineWebSessionManager;
+import com.galaxy.framework.shiro.web.filter.captcha.CaptchaValidateFilter;
+import com.galaxy.framework.shiro.web.session.OnlineWebSessionManager;
 import net.sf.ehcache.CacheManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.io.ResourceUtils;
-import org.apache.shiro.mgt.DefaultSecurityManager;
-import org.apache.shiro.mgt.RememberMeManager;
 import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.session.mgt.SessionFactory;
-import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
+import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -144,7 +141,7 @@ public class ShiroConfig {
         }
     }
 
-    private InputStream getCacheManagerConfigFileInputStream() {
+    protected InputStream getCacheManagerConfigFileInputStream() {
         String configFile = "classpath:ehcache/ehcache-shiro.xml";
         InputStream inputStream = null;
         try {
@@ -218,7 +215,7 @@ public class ShiroConfig {
      */
     @Bean
     public SecurityManager securityManager(UserRealm userRealm){
-        DefaultSecurityManager securityManager = new DefaultSecurityManager();
+        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setRealm(userRealm);
         securityManager.setRememberMeManager(rememberMe ? rememberMeManager() : null);
         securityManager.setCacheManager(getEhCacheManager());
@@ -283,25 +280,45 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/logout", "logout");
         // 不需要拦截的访问
         filterChainDefinitionMap.put("/login", "anon,captchaValidate");
-        // 注册相关
-        filterChainDefinitionMap.put("/register", "anon,captchaValidate");
+//        // 注册相关
+//        filterChainDefinitionMap.put("/register", "anon,captchaValidate");
         // 系统权限列表
-        // filterChainDefinitionMap.putAll(SpringUtils.getBean(IMenuService.class).selectPermsAll());
+//         filterChainDefinitionMap.putAll(SpringUtils.getBean(IMenuService.class).selectPermsAll());
 
         Map<String, Filter> filters = new LinkedHashMap<String, Filter>();
 //        filters.put("onlineSession", onlineSessionFilter());
 //        filters.put("syncOnlineSession", syncOnlineSessionFilter());
-//        filters.put("captchaValidate", captchaValidateFilter());
+        filters.put("captchaValidate", captchaValidateFilter());
 //        filters.put("kickout", kickoutSessionFilter());
 //        // 注销成功，则跳转到指定页面
 //        filters.put("logout", logoutFilter());
         shiroFilterFactoryBean.setFilters(filters);
 
         // 所有请求需要认证
-        filterChainDefinitionMap.put("/**", "user,kickout,onlineSession,syncOnlineSession");
+//        filterChainDefinitionMap.put("/**", "user,kickout,onlineSession,syncOnlineSession");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 
         return shiroFilterFactoryBean;
+    }
+
+    /**
+     * thymeleaf模板引擎和shiro框架的整合
+     */
+    @Bean
+    public ShiroDialect shiroDialect()
+    {
+        return new ShiroDialect();
+    }
+
+    /**
+     * 自定义验证码过滤器
+     */
+    public CaptchaValidateFilter captchaValidateFilter()
+    {
+        CaptchaValidateFilter captchaValidateFilter = new CaptchaValidateFilter();
+        captchaValidateFilter.setCaptchaEnabled(captchaEnabled);
+        captchaValidateFilter.setCaptchaType(captchaType);
+        return captchaValidateFilter;
     }
 
 }
