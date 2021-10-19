@@ -16,7 +16,7 @@ galaxy:
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为80
-  port: 80
+  port: 8080
   servlet:
     # 应用的访问路径
     context-path: /
@@ -64,11 +64,12 @@ spring:
     restart:
       # 热部署开关
       enabled: true
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql:10.10.20.64/ry-single
-    username: single
-    password: single
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql:10.10.20.64/ry-single
+#    username: single
+#    password: single
+#    type: com.alibaba.druid.pool.DruidDataSource
 
 # MyBatis
 mybatis:
