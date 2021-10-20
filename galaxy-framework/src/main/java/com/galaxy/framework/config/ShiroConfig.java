@@ -8,6 +8,8 @@ import com.galaxy.framework.shiro.realm.UserRealm;
 import com.galaxy.framework.shiro.session.OnlineSessionDAO;
 import com.galaxy.framework.shiro.session.OnlineSessionFactory;
 import com.galaxy.framework.shiro.web.filter.captcha.CaptchaValidateFilter;
+import com.galaxy.framework.shiro.web.filter.kickout.KickoutSessionFilter;
+import com.galaxy.framework.shiro.web.filter.online.OnlineSessionFilter;
 import com.galaxy.framework.shiro.web.session.OnlineWebSessionManager;
 import net.sf.ehcache.CacheManager;
 import org.apache.commons.io.IOUtils;
@@ -286,7 +288,7 @@ public class ShiroConfig {
 //         filterChainDefinitionMap.putAll(SpringUtils.getBean(IMenuService.class).selectPermsAll());
 
         Map<String, Filter> filters = new LinkedHashMap<String, Filter>();
-//        filters.put("onlineSession", onlineSessionFilter());
+        filters.put("onlineSession", onlineSessionFilter());
 //        filters.put("syncOnlineSession", syncOnlineSessionFilter());
         filters.put("captchaValidate", captchaValidateFilter());
 //        filters.put("kickout", kickoutSessionFilter());
@@ -295,7 +297,7 @@ public class ShiroConfig {
         shiroFilterFactoryBean.setFilters(filters);
 
         // 所有请求需要认证
-//        filterChainDefinitionMap.put("/**", "user,kickout,onlineSession,syncOnlineSession");
+        filterChainDefinitionMap.put("/**", "user,authc");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 
         return shiroFilterFactoryBean;
@@ -320,5 +322,45 @@ public class ShiroConfig {
         captchaValidateFilter.setCaptchaType(captchaType);
         return captchaValidateFilter;
     }
+
+    /**
+     * 自定义在线用户处理过滤器
+     */
+    public OnlineSessionFilter onlineSessionFilter()
+    {
+        OnlineSessionFilter onlineSessionFilter = new OnlineSessionFilter();
+        onlineSessionFilter.setLoginUrl(loginUrl);
+        onlineSessionFilter.setOnlineSessionDAO(sessionDAO());
+        return onlineSessionFilter;
+    }
+
+//    /**
+//     * 自定义在线用户同步过滤器
+//     */
+//    public SyncOnlineSessionFilter syncOnlineSessionFilter()
+//    {
+//        SyncOnlineSessionFilter syncOnlineSessionFilter = new SyncOnlineSessionFilter();
+//        syncOnlineSessionFilter.setOnlineSessionDAO(sessionDAO());
+//        return syncOnlineSessionFilter;
+//    }
+
+//    /**
+//     * 同一个用户多设备登录限制
+//     */
+//    public KickoutSessionFilter kickoutSessionFilter()
+//    {
+//        KickoutSessionFilter kickoutSessionFilter = new KickoutSessionFilter();
+//        kickoutSessionFilter.setCacheManager(getEhCacheManager());
+//        kickoutSessionFilter.setSessionManager(sessionManager());
+//        // 同一个用户最大的会话数，默认-1无限制；比如2的意思是同一个用户允许最多同时两个人登录
+//        kickoutSessionFilter.setMaxSession(maxSession);
+//        // 是否踢出后来登录的，默认是false；即后者登录的用户踢出前者登录的用户；踢出顺序
+//        kickoutSessionFilter.setKickoutAfter(kickoutAfter);
+//        // 被踢出后重定向到的地址；
+//        kickoutSessionFilter.setKickoutUrl("/login?kickout=1");
+//        return kickoutSessionFilter;
+//    }
+
+
 
 }

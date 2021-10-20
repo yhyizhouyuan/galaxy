@@ -14,7 +14,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * <p>TODO</p>
+ * <p>针对自定义的ShiroSession的db操作</p>
  *
  * @author Hance
  * @version V1.0.0
