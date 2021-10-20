@@ -4,15 +4,16 @@ import com.galaxy.common.constant.Constants;
 import com.galaxy.common.constant.ShiroConstants;
 import com.galaxy.common.constant.UserConstants;
 import com.galaxy.common.core.domain.entity.SysUser;
-import com.galaxy.common.exception.user.CaptchaException;
-import com.galaxy.common.exception.user.UserNotExistsException;
-import com.galaxy.common.exception.user.UserPasswordNotMatchException;
+import com.galaxy.common.enums.UserStatus;
+import com.galaxy.common.exception.user.*;
 import com.galaxy.common.utils.MessageUtils;
 import com.galaxy.common.utils.ServletUtils;
 import com.galaxy.common.utils.ShiroUtils;
 import com.galaxy.common.utils.StringUtils;
 import com.galaxy.framework.manager.AsyncFactory;
 import com.galaxy.framework.manager.AsyncManager;
+import com.galaxy.system.service.ISysUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,12 @@ import javax.websocket.RemoteEndpoint;
  */
 @Component
 public class SysLoginService {
+    @Autowired
+    private ISysUserService userService;
+
+    @Autowired
+    private SysPasswordService passwordService;
+
     public SysUser login(String username, String password) {
         if (ShiroConstants.CAPTCHA_ERROR.equals(ServletUtils.getRequest().getAttribute(ShiroConstants.CURRENT_CAPTCHA))) {
             AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.jcaptcha.error")));
@@ -50,7 +57,25 @@ public class SysLoginService {
             AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.password.not.match")));
             throw new UserPasswordNotMatchException();
         }
-        return null;
+        SysUser user = userService.selectUserByLoginName(username);
+        if (user == null) {
+            AsyncManager.me().execute(AsyncFactory.recordLogininfor(username,Constants.LOGIN_FAIL,MessageUtils.message("user.not.exits")));
+            throw new UserNotExistsException();
+        }
+        if (UserStatus.DELETED.getCode().equals(user.getDelFlag()))
+        {
+            AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.password.delete")));
+            throw new UserDeleteException();
+        }
+
+        if (UserStatus.DISABLE.getCode().equals(user.getStatus()))
+        {
+            AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.blocked", user.getRemark())));
+            throw new UserBlockedException();
+        }
+        passwordService.validate(user,password);
+
+        return user;
 
     }
 }

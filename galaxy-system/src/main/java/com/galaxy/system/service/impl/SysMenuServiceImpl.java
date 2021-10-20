@@ -36,7 +36,7 @@ public class SysMenuServiceImpl implements ISysMenuService {
         }else {
             menus = menuMapper.selectMenusByUserId(user.getUserId());
         }
-        return null;
+        return getChildPerms(menus,0);
     }
 
     /**
@@ -55,6 +55,25 @@ public class SysMenuServiceImpl implements ISysMenuService {
             }
         }
         return permsSet;
+    }
+
+    /**
+     * 查询系统菜单列表
+     *
+     * @param menu 菜单信息
+     * @param userId 用户ID
+     * @return 菜单列表
+     */
+    @Override
+    public List<SysMenu> selectMenuList(SysMenu menu, Long userId) {
+        List<SysMenu> menuList = null;
+        if (SysUser.isAdmin(userId)){
+            menuList = menuMapper.selectMenuList(menu);
+        }else {
+            menu.getParams().put("userId",userId);
+            menuList = menuMapper.selectMenuListByUserId(menu);
+        }
+        return menuList;
     }
 
     /**

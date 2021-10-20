@@ -21,4 +21,20 @@ public interface SysMenuMapper {
      * @return 权限列表
      */
     public List<SysMenu> selectPermsByUserId(Long userId);
+
+    /**
+     * 查询系统菜单列表
+     *
+     * @param menu 菜单信息
+     * @return 菜单列表
+     */
+    List<SysMenu> selectMenuList(SysMenu menu);
+
+    /**
+     * 查询系统菜单列表
+     *
+     * @param menu 菜单信息
+     * @return 菜单列表
+     */
+    List<SysMenu> selectMenuListByUserId(SysMenu menu);
 }

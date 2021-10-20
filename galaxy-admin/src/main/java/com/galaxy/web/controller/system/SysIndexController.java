@@ -50,12 +50,14 @@ public class SysIndexController extends BaseController {
         mmap.put("isDefaultModifyPwd",initPasswordIsModify(user.getPwdUpdateDate()));
         mmap.put("isPasswordExpired",passwordIsExpiration(user.getPwdUpdateDate()));
         mmap.put("isMobile", ServletUtils.checkAgentIsMobile(ServletUtils.getRequest().getHeader("User-Agent")));
+
         String menuStyle = configService.selectConfigByKey("sys.index.menuStyle");
         String indexStyle = ServletUtils.checkAgentIsMobile(ServletUtils.getRequest().getHeader("User-Agent")) ? "index" : menuStyle;
         Cookie[] cookies = ServletUtils.getRequest().getCookies();
         for (Cookie cookie : cookies) {
             if (StringUtils.isNotEmpty(cookie.getName())&&"nav-style".equalsIgnoreCase(cookie.getName())){
                 indexStyle = cookie.getValue();
+                break;
             }
         }
         String webIndex = "topnav".equalsIgnoreCase(indexStyle)? "index-topnav" : "index";
@@ -78,6 +80,12 @@ public class SysIndexController extends BaseController {
     private boolean initPasswordIsModify(Date pwdUpdateDate) {
         Integer initPasswordModify = Convert.toInt(configService.selectConfigByKey("sys.account.initPasswordModify"));
         return initPasswordModify != null && initPasswordModify ==1 && pwdUpdateDate == null;
+    }
+
+    @GetMapping("/system/main")
+    public String main(ModelMap mmap){
+        mmap.put("version",GalaxyConfig.getVersion());
+        return "main";
     }
 
     // content-main class
