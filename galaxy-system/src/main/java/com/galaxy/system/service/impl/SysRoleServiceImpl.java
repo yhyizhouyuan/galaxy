@@ -1,10 +1,15 @@
 package com.galaxy.system.service.impl;
 
+import com.galaxy.common.core.domain.entity.SysRole;
+import com.galaxy.common.utils.StringUtils;
 import com.galaxy.system.mapper.SysRoleMapper;
 import com.galaxy.system.service.ISysRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -28,7 +33,13 @@ public class SysRoleServiceImpl implements ISysRoleService {
      */
     @Override
     public Set<String> selectRoleKeys(Long userId) {
-        roleMapper.selectRolesByUserId(userId);
-        return null;
+        List<SysRole> perms = roleMapper.selectRolesByUserId(userId);
+        Set<String> permSet = new HashSet<>();
+        for (SysRole perm : perms) {
+            if (StringUtils.isNotNull(perm)){
+                permSet.addAll(Arrays.asList(perm.getRoleKey().trim().split(",")));
+            }
+        }
+        return permSet;
     }
 }

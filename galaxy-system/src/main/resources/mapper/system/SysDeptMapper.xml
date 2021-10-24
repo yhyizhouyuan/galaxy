@@ -51,4 +51,9 @@
         from sys_dept d
         where d.dept_id = #{deptId}
     </select>
+
+    <select id="checkDeptNameUnique" resultMap="SysDeptResult">
+        <include refid="selectDeptVo"/>
+        where dept_name=#{deptName} and parent_id = #{parentId} limit 1
+    </select>
 </mapper>

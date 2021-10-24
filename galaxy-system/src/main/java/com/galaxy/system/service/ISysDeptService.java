@@ -29,4 +29,12 @@ public interface ISysDeptService {
      * @return 所有部门信息
      */
     public List<Ztree> selectDeptTree(SysDept dept);
+
+    /**
+     * 校验部门名称是否唯一
+     *
+     * @param dept 部门信息
+     * @return 结果
+     */
+    public String checkDeptNameUnique(SysDept dept);
 }

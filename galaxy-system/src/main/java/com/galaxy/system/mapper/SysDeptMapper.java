@@ -1,6 +1,7 @@
 package com.galaxy.system.mapper;
 
 import com.galaxy.common.core.domain.entity.SysDept;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -21,4 +22,13 @@ public interface SysDeptMapper {
      * @return 部门信息
      */
     public SysDept selectDeptById(Long deptId);
+
+    /**
+     * 校验部门名称是否唯一
+     *
+     * @param deptName 部门名称
+     * @param parentId 父部门ID
+     * @return 结果
+     */
+    public SysDept checkDeptNameUnique(@Param("deptName") String deptName, @Param("parentId") Long parentId);
 }

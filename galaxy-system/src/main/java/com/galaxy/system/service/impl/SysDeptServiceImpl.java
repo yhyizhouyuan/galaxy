@@ -64,6 +64,22 @@ public class SysDeptServiceImpl implements ISysDeptService {
     }
 
     /**
+     * 校验部门名称是否唯一
+     *
+     * @param dept 部门信息
+     * @return 结果
+     */
+    @Override
+    public String checkDeptNameUnique(SysDept dept) {
+        Long deptId = StringUtils.isNull(dept.getDeptId()) ? -1L : dept.getDeptId();
+        SysDept info = deptMapper.checkDeptNameUnique(dept.getDeptName(), dept.getParentId());
+        if (StringUtils.isNotNull(info) && info.getDeptId().longValue() != deptId.longValue()){
+            return UserConstants.DEPT_NAME_NOT_UNIQUE;
+        }
+        return UserConstants.DEPT_NAME_UNIQUE;
+    }
+
+    /**
      * 对象转部门树
      *
      * @param deptList 部门列表

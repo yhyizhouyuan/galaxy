@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * <p>TODO</p>
+ * <p>表格分页数据对象</p>
  *
  * @author Hance
  * @version V1.0.0
@@ -82,5 +82,15 @@ public class TableDataInfo implements Serializable {
     public void setMsg(String msg)
     {
         this.msg = msg;
+    }
+
+    @Override
+    public String toString() {
+        return "TableDataInfo{" +
+                "total=" + total +
+                ", rows=" + rows +
+                ", code=" + code +
+                ", msg='" + msg + '\'' +
+                '}';
     }
 }

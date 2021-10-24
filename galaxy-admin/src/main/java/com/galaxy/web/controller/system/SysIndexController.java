@@ -10,10 +10,12 @@ import com.galaxy.common.utils.ServletUtils;
 import com.galaxy.common.utils.StringUtils;
 import com.galaxy.system.service.ISysConfigService;
 import com.galaxy.system.service.ISysMenuService;
+import org.apache.shiro.web.filter.authc.LogoutFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.Cookie;
 import java.util.Date;
@@ -104,6 +106,11 @@ public class SysIndexController extends BaseController {
             return "tagsview-hide";
         }
         return StringUtils.EMPTY;
+    }
+
+    @RequestMapping("/")
+    public String toIndex(){
+        return "redirect:/index";
     }
 
 }

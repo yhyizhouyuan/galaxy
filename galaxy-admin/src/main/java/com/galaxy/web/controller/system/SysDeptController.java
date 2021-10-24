@@ -77,6 +77,15 @@ public class SysDeptController extends BaseController {
         return ztrees;
     }
 
+    /**
+     * 校验部门名称
+     */
+    @PostMapping("/checkDeptNameUnique")
+    @ResponseBody
+    public String checkDeptNameUnique(SysDept dept){
+        return deptService.checkDeptNameUnique(dept);
+    }
+
 
 
 }

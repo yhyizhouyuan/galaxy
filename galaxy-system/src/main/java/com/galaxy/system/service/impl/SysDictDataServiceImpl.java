@@ -6,6 +6,8 @@ import com.galaxy.system.service.ISysDictDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * <p>字典 业务层处理</p>
  *
@@ -28,5 +30,16 @@ public class SysDictDataServiceImpl implements ISysDictDataService {
     @Override
     public String selectDictLabel(String dictType, String dictValue) {
         return dictDataMapper.selectDictLabel(dictType,dictValue);
+    }
+
+    /**
+     * 根据条件分页查询字典数据
+     *
+     * @param dictData 字典数据信息
+     * @return 字典数据集合信息
+     */
+    @Override
+    public List<SysDictData> selectDictDataList(SysDictData dictData) {
+        return dictDataMapper.selectDictDataList(dictData);
     }
 }

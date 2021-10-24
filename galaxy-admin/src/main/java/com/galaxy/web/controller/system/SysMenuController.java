@@ -32,7 +32,6 @@ public class SysMenuController extends BaseController {
 
     @RequiresPermissions("system:menu:view")
     @GetMapping()
-    @ResponseBody
     public String menu(){
         return prefix + "/menu";
     }

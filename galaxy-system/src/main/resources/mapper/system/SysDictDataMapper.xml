@@ -33,4 +33,20 @@
         where status = '0' and dict_type = #{dictType} order by dict_sort asc
     </select>
 
+    <select id="selectDictDataList" parameterType="SysDictData" resultMap="SysDictDataResult">
+        <include refid="selectDictDataVo"/>
+        <where>
+            <if test="dictType != null and dictType != ''">
+                AND dict_type = #{dictType}
+            </if>
+            <if test="dictLabel != null and dictLabel != ''">
+                AND dict_label like concat('%', #{dictLabel}, '%')
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
+    </select>
+
+
 </mapper>

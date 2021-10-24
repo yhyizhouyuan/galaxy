@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import javax.websocket.RemoteEndpoint;
 
 /**
- * <p>TODO</p>
+ * <p>登录校验方法</p>
  *
  * @author Hance
  * @version V1.0.0
@@ -35,6 +35,7 @@ public class SysLoginService {
     private SysPasswordService passwordService;
 
     public SysUser login(String username, String password) {
+        // 验证码校验
         if (ShiroConstants.CAPTCHA_ERROR.equals(ServletUtils.getRequest().getAttribute(ShiroConstants.CURRENT_CAPTCHA))) {
             AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.jcaptcha.error")));
             throw new CaptchaException();

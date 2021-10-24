@@ -102,4 +102,17 @@ public class Ztree implements Serializable {
     {
         this.nocheck = nocheck;
     }
+
+    @Override
+    public String toString() {
+        return "Ztree{" +
+                "id=" + id +
+                ", pId=" + pId +
+                ", name='" + name + '\'' +
+                ", title='" + title + '\'' +
+                ", checked=" + checked +
+                ", open=" + open +
+                ", nocheck=" + nocheck +
+                '}';
+    }
 }
