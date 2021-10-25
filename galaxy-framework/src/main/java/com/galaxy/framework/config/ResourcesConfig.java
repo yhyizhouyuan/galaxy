@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * <p>TODO</p>
+ * <p>配置路径映射</p>
  *
  * @author Hance
  * @version V1.0.0

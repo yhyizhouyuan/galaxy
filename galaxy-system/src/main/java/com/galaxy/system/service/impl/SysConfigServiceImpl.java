@@ -60,6 +60,17 @@ public class SysConfigServiceImpl implements ISysConfigService {
     }
 
     /**
+     * 查询参数配置列表
+     *
+     * @param config 参数配置信息
+     * @return 参数配置集合
+     */
+    @Override
+    public List<SysConfig> selectConfigList(SysConfig config) {
+        return configMapper.selectConfigList(config);
+    }
+
+    /**
      * 根据键名查询参数配置信息
      *
      * @param configKey 参数key
